@@ -1,0 +1,106 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# This configuration file is heavily inspired by @google/skia.
+
+import("gn/shared_sources.gni")
+import("gn/astraea_config.gni")
+
+# Astraea public API, provided by :astraea.
+config("astraea_public") {
+  include_dirs = [ "." ]
+
+  defines = []
+  cflags_objcc = []
+}
+
+# Astraea internal APIs.
+config("astraea_private") {
+  visibility = [ ":*" ]
+
+  defines = []
+  libs = []
+  lib_dirs = []
+}
+
+# Any code that's linked into Astraea-the-library should use this config via += astraea_library_configs.
+config("astraea_library") {
+  visibility = [ ":*" ]
+  defines = []
+}
+
+astraea_library_configs = [
+  ":astraea_public",
+  ":astraea_private",
+  ":astraea_library",
+]
+
+component("astraea") {
+  public_configs = [ ":astraea_public" ]
+  configs += astraea_library_configs
+
+  public_deps = []
+  deps = []
+
+  # This file (and all GN files in Astraea) are designed to work with an
+  # empty sources assignment filter; we handle all that explicitly.
+  # We clear the filter here for clients who may have set up a global filter.
+  set_sources_assignment_filter([])
+
+  public =  astraea_core_public
+  public += astraea_utils_public
+ 
+  sources = []
+  sources += astraea_core_sources
+  sources += astraea_utils_sources
+
+  defines = []
+  libs = []
+
+  if (is_win) {
+    sources += [
+      "source/utils/platform_console_win.cpp",
+      "source/utils/platform_string_win.cpp",
+    ]
+    libs += [
+      "kernel32.lib",
+      "user32.lib",
+    # "gdi32.lib",
+    # "winspool.lib",
+    # "comdlg32.lib",
+    # "advapi32.lib",
+      "shell32.lib",
+      "ole32.lib",
+      "oleaut32.lib",
+    # "uuid.lib",
+    # "odbc32.lib",
+    # "odbccp32.lib",
+    # "fontsub.lib",
+    # "usp10.lib",
+    ]
+  } else if (is_linux || is_mac) {
+    sources += [
+      "source/utils/platform_console_posix.cpp",
+      "source/utils/platform_string_posix.cpp",
+    ]
+  }
+}
+
+executable("test") {
+  configs += astraea_library_configs
+
+  deps = [
+    ":astraea",
+  ]
+
+  # This file (and all GN files in Astraea) are designed to work with an
+  # empty sources assignment filter; we handle all that explicitly.
+  # We clear the filter here for clients who may have set up a global filter.
+  set_sources_assignment_filter([])
+
+  sources = [
+    "source/test/test.cpp",
+  ]
+}

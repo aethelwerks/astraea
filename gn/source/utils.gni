@@ -1,0 +1,23 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Things are easiest for everyone if these source paths are absolute.
+_source = get_path_info("../../source", "abspath")
+_include = get_path_info("../../include", "abspath")
+
+astraea_utils_public = [
+  "$_include/utils/array.hpp",
+  "$_include/utils/binaryreader.hpp",
+  "$_include/utils/endian.hpp",
+  "$_include/utils/platform.hpp",
+  "$_include/utils/platform_console.hpp",
+  "$_include/utils/platform_string.hpp",
+  "$_include/utils/types.hpp",
+  "$_include/utils/unicode.hpp",
+]
+
+astraea_utils_sources = [
+  "$_source/utils/platform_string.cpp",
+]

@@ -1,0 +1,27 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Things are easiest for everyone if these source paths are absolute.
+_source = get_path_info("../../source", "abspath")
+_include = get_path_info("../../include", "abspath")
+
+astraea_core_public = [
+  "$_include/core/ast.hpp",
+  "$_include/core/ast_types.hpp",
+  "$_include/core/lexer.inl",
+  "$_include/core/lexer.hpp",
+  "$_include/core/parser.hpp",
+  "$_include/core/scope.hpp",
+  "$_include/core/token.hpp",
+  "$_include/core/visitor.hpp",
+]
+
+astraea_core_sources = [
+  "$_source/core/ast.cpp",
+  "$_source/core/lexer.cpp",
+  "$_source/core/parser.cpp",
+  "$_source/core/scope.cpp",
+  "$_source/core/visitor.cpp",
+]

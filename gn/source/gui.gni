@@ -1,0 +1,31 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# Things are easiest for everyone if these source paths are absolute.
+_source = get_path_info("../../source", "abspath")
+_include = get_path_info("../../include", "abspath")
+
+astraea_gui_public = [
+  "$_include/gui/astraea_context.hpp",
+  "$_include/gui/astraea_contextmanager.hpp",
+  "$_include/gui/astraea_contextmanagerglfw.hpp",
+  "$_include/gui/astraea_imgui_layer.hpp",
+  "$_include/gui/astraea_imgui_manager.hpp",    
+  "$_include/gui/astraea_imgui_logger.hpp",
+  "$_include/gui/astraea_layer.hpp",
+  "$_include/gui/astraea_timestep.hpp",
+]
+
+
+astraea_gui_sources = [
+  "$_source/gui/astraea_atelier_gui.cpp",
+  "$_source/gui/astraea_contextmanagerglfw.cpp",
+  "$_source/gui/astraea_imgui_layer.cpp",
+  "$_source/gui/astraea_imgui_manager.cpp",
+  "$_source/gui/astraea_imgui_logger.cpp",
+  "$_source/gui/astraea_atelier_uibase.cpp",
+  # private headers
+  # "$_include/gui/some_private.hpp",
+]

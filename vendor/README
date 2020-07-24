@@ -1,0 +1,12 @@
+The directory vendor contains a set of dependencies from outside sources
+that are needed to build various components and tools within Astraea.
+
+Some of these dependencies reside within the Astraea repo, while others are pulled
+from other repositories and placed in the vendor/libraries/externals directory
+during build. These external dependencies are defined in a .gitmodules file.
+
+Products in vendor are subject to their own respective license terms.
+The license for each project should be included in the source itself via a license
+header or file. If the source itself does not include a license header or file,
+create a README that refers to reliable documentation of the project's license
+terms on the web.

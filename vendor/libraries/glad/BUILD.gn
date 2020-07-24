@@ -1,0 +1,19 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+
+}
+
+import("../third_party.gni")
+
+third_party("glad") {
+  public_include_dirs = [ "../externals/glad/include" ]
+  public_defines = []
+
+  sources = [
+    "../externals/glad/glad.c",
+  ]
+}

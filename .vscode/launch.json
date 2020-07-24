@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Astraea-CLI",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "astraea-cli.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/out/vscode",
+            "environment": [],
+            "externalConsole": true
+        },
+        {
+            "name": "Astraea-GUI",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "astraea-gui.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/out/vscode",
+            "environment": [],
+            "externalConsole": true
+        }
+    ]
+}

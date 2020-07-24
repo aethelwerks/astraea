@@ -1,0 +1,39 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+if (!defined(is_astraea_standalone)) {
+  is_astraea_standalone = false
+}
+
+is_astraea_dev_build = is_astraea_standalone && !is_official_build
+
+declare_args() {
+  astraea_enable_gpu = true
+  astraea_enable_tools = is_astraea_dev_build
+  astraea_use_gl = true
+  astraea_gl_standard = ""
+  astraea_use_angle = false
+  astraea_use_dawn = false
+  astraea_use_direct3d = false
+  astraea_use_egl = false
+  astraea_use_fontconfig = is_linux
+  astraea_use_freetype = is_linux
+  astraea_use_icu = true
+  astraea_use_libjpeg_turbo_decode = true
+  astraea_use_libjpeg_turbo_encode = true
+  astraea_use_libpng_decode = true
+  astraea_use_libpng_encode = true
+  astraea_use_libwebp_decode = true
+  astraea_use_libwebp_encode = true
+  astraea_use_lua = is_astraea_dev_build
+  astraea_use_metal = false
+  astraea_use_opencl = false
+  astraea_use_x11 = is_linux
+  astraea_use_zlib = true
+  astraea_use_vulkan = false
+}
+
+# Our tools require static linking (they use non-exported symbols), and the GPU backend.
+astraea_enable_tools = astraea_enable_tools && !is_component_build && astraea_enable_gpu

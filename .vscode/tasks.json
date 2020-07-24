@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Generate Ninja",
+            "type": "shell",
+            "command": "vendor/binaries/gn/gn gen -C out/vscode"
+        },
+        {
+            "label": "Build",
+            "type": "shell",
+            "command": "ninja -j8 -C out/vscode",
+            "dependsOn": ["Generate Ninja"],
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

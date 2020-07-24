@@ -1,0 +1,65 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+
+}
+
+import("../third_party.gni")
+
+third_party("glfw") {
+  public_include_dirs = [ "../externals/glfw/include" ]
+  sources = [
+    "../externals/glfw/include/GLFW/glfw3.h",
+    "../externals/glfw/include/GLFW/glfw3native.h",
+    "../externals/glfw/src/internal.h",
+    "../externals/glfw/src/context.c",
+    "../externals/glfw/src/init.c",
+    "../externals/glfw/src/input.c",
+    "../externals/glfw/src/mappings.h",
+    "../externals/glfw/src/monitor.c",
+    "../externals/glfw/src/vulkan.c",
+    "../externals/glfw/src/window.c",
+  ]
+  defines = [
+  # "GLFW_INCLUDE_NONE",
+    "_CRT_SECURE_NO_WARNINGS",
+  ]
+  libs = []
+  
+  if (is_win) {
+    defines += [
+      "_GLFW_WIN32",
+    ]
+    sources += [
+      "../externals/glfw/src/win32_platform.h",
+      "../externals/glfw/src/win32_joystick.h",
+      "../externals/glfw/src/wgl_context.h",
+      "../externals/glfw/src/egl_context.h",
+      "../externals/glfw/src/osmesa_context.h",
+      "../externals/glfw/src/win32_init.c",
+      "../externals/glfw/src/win32_joystick.c",
+      "../externals/glfw/src/win32_monitor.c",
+      "../externals/glfw/src/win32_time.c",
+      "../externals/glfw/src/win32_thread.c",
+      "../externals/glfw/src/win32_window.c",
+      "../externals/glfw/src/wgl_context.c",
+      "../externals/glfw/src/egl_context.c",
+      "../externals/glfw/src/osmesa_context.c",
+    ]
+    libs += [ "libucrt.lib", ]
+  }
+
+  # _GLFW_USE_CONFIG_H can we undefine this?
+  if (is_linux) {
+    defines += [
+      "_GLFW_X11",
+      "_GLFW_WAYLAND", 
+    ]
+    sources += [
+      "../externals/glfw/src/win32_platform.h",
+    ]
+  }
+}

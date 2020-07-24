@@ -1,0 +1,118 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This GN configuration file originates from Google Skia and was provided
+# under the terms bellow. The original license file used by Google may be
+# found in the ThirdPartyNotices file.
+#
+# ORIGINAL DISCLAIMER:
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+# It's best to keep the names and defaults of is_foo flags consistent with Chrome.
+
+declare_args() {
+  is_official_build = true
+  is_component_build = false
+
+  sanitize = ""
+
+  ar = "ar"
+  cc = "cc"
+  cxx = "c++"
+
+  win_sdk = "C:/Program Files (x86)/Windows Kits/10"
+  win_sdk_version = "10.0.18362.0"
+
+  win_vc = "D:/Data/Programs/MSVC/2019/Preview/VC"
+  win_toolchain_version = "14.27.29109"
+
+  clang_win = "" # clang_win = "$win_vc/Tools/Llvm/x64"
+  clang_win_version = ""
+}
+declare_args() {
+  is_debug = !is_official_build
+}
+
+if (target_os == "") {
+  target_os = host_os
+}
+if (target_cpu  == "") {
+  target_cpu = host_cpu
+}
+if (current_cpu == "") {
+  current_cpu = target_cpu
+}
+if (current_os  == "") {
+  current_os = target_os
+}
+
+is_linux = host_os == "linux" && current_os == "linux" && target_os == "linux"
+is_mac   = host_os == "mac" && current_os == "mac" && target_os == "mac"
+is_win   = host_os == "win" && current_os == "win" && target_os == "win"
+is_clang = cc == "clang" && cxx == "clang++" || clang_win != ""
+
+# A component is either a static or a shared library.
+template("component") {
+  _component_mode = "static_library"
+  if (is_component_build) {
+    _component_mode = "shared_library"
+  }
+
+  target(_component_mode, target_name) {
+    forward_variables_from(invoker, "*")
+  }
+}
+
+# Default configs
+default_configs = [
+  "//gn:default",
+  "//gn:no_exceptions",
+  "//gn:modules",
+  "//gn:no_rtti",
+]
+if (!is_debug) {
+  default_configs += [
+    "//gn:optimize",
+    "//gn:NDEBUG",
+  ]
+}
+
+set_defaults("executable") {
+  configs = [ "//gn:executable" ] + default_configs
+}
+
+set_defaults("source_set") {
+  configs = default_configs
+}
+
+set_defaults("static_library") {
+  configs = default_configs
+}
+
+set_defaults("shared_library") {
+  configs = default_configs
+}
+
+set_defaults("component") {
+  configs = default_configs
+  if (!is_component_build) {
+    complete_static_lib = true
+  }
+}
+
+if (is_win) {
+  # Windows tool chain
+  set_default_toolchain("//gn/toolchain:msvc")
+  default_toolchain_name = "msvc"
+  host_toolchain = "msvc"
+} else {
+  # GCC-like toolchains, including Clang.
+  set_default_toolchain("//gn/toolchain:gcc_like")
+  default_toolchain_name = "gcc_like"
+  host_toolchain = "gcc_like_host"
+}

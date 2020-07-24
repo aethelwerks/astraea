@@ -1,0 +1,331 @@
+# Copyright 2020 Krayfaus. All rights reserved.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+#
+# This GN configuration file originates from Google Skia and was provided
+# under the terms bellow. The original license file used by Google may be
+# found in the ThirdPartyNotices file.
+#
+# ORIGINAL DISCLAIMER:
+# Copyright 2016 Google Inc.
+#
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+declare_args() {
+  host_ar = ar
+  host_cc = cc
+  host_cxx = cxx
+
+  target_ar = ar
+  target_cc = cc
+  target_cxx = cxx
+
+  cc_wrapper = ""
+}
+
+# For 'shell' see https://ninja-build.org/manual.html#ref_rule_command
+if (host_os == "win") {
+  shell = "cmd.exe /c "
+  stamp = "$shell echo >"
+} else {
+  shell = ""
+  stamp = "touch"
+}
+
+toolchain("msvc") { 
+  lib_switch = ""
+  lib_dir_switch = "/LIBPATH:"
+
+  bin = "$win_vc/Tools/MSVC/$win_toolchain_version/bin/HostX64/$target_cpu"
+  clang_win = ""
+  cc_wrapper = ""
+
+  env_setup = ""
+  # There was some setup here for x86 computers, review later.
+  cl_m32_flag = ""
+
+  if (clang_win != "") {
+    if (target_cpu == "x86") {
+      # cl.exe knows implicitly by the choice of executable that it's targeting
+      # x86, but clang-cl.exe needs to be told when targeting non-host
+      # platforms. (All our builders are x86-64, so x86 is always non-host.)
+      cl_m32_flag = "-m32"
+    }
+    if (host_os == "win") {
+      cl = "\"$clang_win/bin/clang-cl.exe\""
+      lib = "\"$clang_win/bin/lld-link.exe\" /lib"
+      link = "\"$clang_win/bin/lld-link.exe\""
+    } else {
+      cl = "\"$clang_win/bin/clang-cl\""
+      lib = "\"$clang_win/bin/lld-link\" /lib"
+      link = "\"$clang_win/bin/lld-link\""
+    }
+  } else {
+    cl = "\"$bin/cl.exe\""
+    lib = "\"$bin/lib.exe\""
+    link = "\"$bin/link.exe\""
+  }
+
+  tool("asm") {
+    _ml = "ml"
+    if (target_cpu == "x64") {
+      _ml += "64"
+    }
+    command = "$env_setup \"$bin/$_ml.exe\" {{asmflags}} /nologo /c /Fo {{output}} {{source}}"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj" ]
+    description = "assemble {{source}}"
+  }
+
+  tool("cc") {
+    precompiled_header_type = "msvc"
+    pdbname = "{{target_out_dir}}/{{label_name}}_c.pdb"
+
+    # Label names may have spaces so pdbname must be quoted.
+    command = "$env_setup $cc_wrapper $cl /nologo /showIncludes /FC {{defines}} {{include_dirs}} {{cflags}} $cl_m32_flag {{cflags_c}} /c {{source}} /Fo{{output}} /Fd\"$pdbname\""
+    depsformat = "msvc"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj" ]
+    description = "compile {{source}}"
+  }
+
+  tool("cxx") {
+    precompiled_header_type = "msvc"
+    pdbname = "{{target_out_dir}}/{{label_name}}_c.pdb"
+
+    # Label names may have spaces so pdbname must be quoted.
+    command = "$env_setup $cc_wrapper $cl /nologo /showIncludes /FC {{defines}} {{include_dirs}} {{cflags}} $cl_m32_flag {{cflags_cc}} /c {{source}} /Fo{{output}} /Fd\"$pdbname\""
+    depsformat = "msvc"
+    outputs =
+        [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.obj" ]
+    description = "compile {{source}}"
+  }
+
+  tool("alink") {
+    rspfile = "{{output}}.rsp"
+
+    command = "$env_setup $lib /nologo /ignore:4221 {{arflags}} /OUT:{{output}} @$rspfile"
+    outputs = [
+      # Ignore {{output_extension}} and always use .lib, there's no reason to
+      # allow targets to override this extension on Windows.
+      "{{root_out_dir}}/{{target_output_name}}{{output_extension}}",
+    ]
+    default_output_extension = ".lib"
+    default_output_dir = "{{target_out_dir}}"
+
+    # inputs_newline works around a fixed per-line buffer size in the linker.
+    rspfile_content = "{{inputs_newline}}"
+    description = "link {{output}}"
+  }
+
+  tool("solink") {
+    dllname = "{{output_dir}}/{{target_output_name}}{{output_extension}}"
+    libname = "${dllname}.lib"
+    pdbname = "${dllname}.pdb"
+    rspfile = "${dllname}.rsp"
+
+    command = "$env_setup $link /nologo /IMPLIB:$libname /DLL /OUT:$dllname /PDB:$pdbname @$rspfile"
+    outputs = [
+      dllname,
+      libname,
+      pdbname,
+    ]
+    default_output_extension = ".dll"
+    default_output_dir = "{{root_out_dir}}"
+
+    link_output = libname
+    depend_output = libname
+    runtime_outputs = [
+      dllname,
+      pdbname,
+    ]
+
+    # I don't quite understand this.  Aping Chrome's toolchain/win/BUILD.gn.
+    restat = true
+
+    # inputs_newline works around a fixed per-line buffer size in the linker.
+    rspfile_content = "{{inputs_newline}} {{libs}} {{solibs}} {{ldflags}}"
+    description = "link {{output}}"
+  }
+
+  tool("link") {
+    exename = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+    pdbname = "$exename.pdb"
+    rspfile = "$exename.rsp"
+
+    command = "$env_setup $link /nologo /OUT:$exename /PDB:$pdbname @$rspfile"
+    default_output_extension = ".exe"
+    default_output_dir = "{{root_out_dir}}"
+    outputs = [ exename ]
+
+    # inputs_newline works around a fixed per-line buffer size in the linker.
+    rspfile_content = "{{inputs_newline}} {{libs}} {{solibs}} {{ldflags}}"
+    description = "link {{output}}"
+  }
+
+  tool("stamp") {
+    command = "$stamp {{output}}"
+    description = "stamp {{output}}"
+  }
+
+  tool("copy") {
+    cp_py = rebase_path("../scripts/cp.py")
+    command = "python \"$cp_py\" {{source}} {{output}}"
+    description = "copy {{source}} {{output}}"
+  }
+}
+
+template("gcc_like_toolchain") {
+  toolchain(target_name) {
+    ar = invoker.ar
+    cc = invoker.cc
+    cxx = invoker.cxx
+    lib_switch = "-l"
+    lib_dir_switch = "-L"
+
+    tool("cc") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_c}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("cxx") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cxx -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("objc") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_objc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("objcxx") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cxx -MD -MF $depfile {{defines}} {{include_dirs}} {{cflags}} {{cflags_cc}} {{cflags_objcc}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "compile {{source}}"
+    }
+
+    tool("asm") {
+      depfile = "{{output}}.d"
+      command = "$cc_wrapper $cc -MD -MF $depfile {{defines}} {{include_dirs}} {{asmflags}} -c {{source}} -o {{output}}"
+      depsformat = "gcc"
+      outputs =
+          [ "{{source_out_dir}}/{{target_output_name}}.{{source_name_part}}.o" ]
+      description = "assemble {{source}}"
+    }
+
+    tool("alink") {
+      rspfile = "{{output}}.rsp"
+      rspfile_content = "{{inputs}}"
+      rm_py = rebase_path("../scripts/rm.py")
+      command = "$shell python \"$rm_py\" \"{{output}}\" && $ar rcs {{output}} @$rspfile"
+
+      outputs =
+          [ "{{root_out_dir}}/{{target_output_name}}{{output_extension}}" ]
+      default_output_extension = ".a"
+      output_prefix = "lib"
+      description = "link {{output}}"
+    }
+
+    tool("solink") {
+      soname = "{{target_output_name}}{{output_extension}}"
+
+      rpath = "-Wl,-soname,$soname"
+
+      rspfile = "{{output}}.rsp"
+      rspfile_content = "{{inputs}}"
+
+      # --start-group/--end-group let us link multiple .a {{inputs}}
+      # without worrying about their relative order on the link line.
+      #
+      # This is mostly important for traditional linkers like GNU ld and Gold.
+      # LLD doesn't need these flags, but accepts and ignores them.
+      _start_group = "-Wl,--start-group"
+      _end_group = "-Wl,--end-group"
+
+      command = "$cxx -shared {{ldflags}} $_start_group @$rspfile {{solibs}} $_end_group {{libs}} $rpath -o {{output}}"
+      outputs = [ "{{root_out_dir}}/$soname" ]
+      output_prefix = "lib"
+      default_output_extension = ".so"
+      description = "link {{output}}"
+    }
+
+    tool("link") {
+      exe_name = "{{root_out_dir}}/{{target_output_name}}{{output_extension}}"
+      rspfile = "$exe_name.rsp"
+      rspfile_content = "{{inputs}}"
+
+      # --start-group/--end-group let us link multiple .a {{inputs}}
+      # without worrying about their relative order on the link line.
+      #
+      # This is mostly important for traditional linkers like GNU ld and Gold.
+      # LLD doesn't need these flags, but accepts and ignores them.
+      _start_group = "-Wl,--start-group"
+      _end_group = "-Wl,--end-group"
+      command = "$cxx {{ldflags}} $_start_group @$rspfile {{solibs}} $_end_group {{libs}} -o $exe_name"
+
+      outputs = [ "$exe_name" ]
+      description = "link {{output}}"
+    }
+
+    tool("stamp") {
+      command = "$stamp {{output}}"
+      description = "stamp {{output}}"
+    }
+
+    tool("copy") {
+      cp_py = rebase_path("../scripts/cp.py")
+      command = "python \"$cp_py\" {{source}} {{output}}"
+      description = "copy {{source}} {{output}}"
+    }
+
+    tool("copy_bundle_data") {
+      cp_py = rebase_path("../scripts/cp.py")
+      command = "python \"$cp_py\" {{source}} {{output}}"
+      description = "copy_bundle_data {{source}} {{output}}"
+    }
+
+    # We don't currently have any xcasset files so make this a NOP
+    tool("compile_xcassets") {
+      command = "true"
+      description = "compile_xcassets {{output}}"
+    }
+
+    toolchain_args = {
+      current_cpu = invoker.cpu
+      current_os = invoker.os
+    }
+  }
+}
+
+gcc_like_toolchain("gcc_like") {
+  cpu = current_cpu
+  os = current_os
+  ar = target_ar
+  cc = target_cc
+  cxx = target_cxx
+}
+
+gcc_like_toolchain("gcc_like_host") {
+  cpu = host_cpu
+  os = host_os
+  ar = host_ar
+  cc = host_cc
+  cxx = host_cxx
+}

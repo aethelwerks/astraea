@@ -1,0 +1,8 @@
+[submodule "vendor/libraries/externals/glfw"]
+	path = vendor/libraries/externals/glfw
+	url = git@github.com:glfw/glfw.git
+	branch = 3.3-stable
+[submodule "vendor/libraries/externals/imgui"]
+	path = vendor/libraries/externals/imgui
+	url = git@github.com:krayfaus/imgui.git
+	branch = docking
