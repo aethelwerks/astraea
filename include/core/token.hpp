@@ -10,12 +10,9 @@
 #include "include/utils/types.hpp"
 
 enum class TokenType : uint32_t {
-    // Special tokens
-    ILLEGAL,
+    ILLEGAL,  // Special tokens
     EOF_,
-
-    // Literals
-    IDENTIFIER,
+    IDENTIFIER,  // Literals
     CHARACTER,
     STRING,
     INTEGER,
@@ -24,9 +21,7 @@ enum class TokenType : uint32_t {
     BINARY,
     OCTAL,
     HEX,
-
-    // Operators
-    PLUS,
+    PLUS,  // Operators
     MINUS,
     STAR,
     SLASH,
@@ -41,7 +36,7 @@ enum class TokenType : uint32_t {
     COMMA,
     DOT,
     DOT_DOT,
-    SEMICOLON,  
+    SEMICOLON,
     PLUS_EQUAL,
     MINUS_EQUAL,
     STAR_EQUAL,
@@ -53,17 +48,13 @@ enum class TokenType : uint32_t {
     EQUAL_EQUAL,
     COLON_EQUAL,
     COLON_COLON,
-
-    // Brackets
-    LEFT_PAREN,
+    LEFT_PAREN,  // Brackets
     RIGHT_PAREN,
     LEFT_BRACE,
     RIGHT_BRACE,
     LEFT_BRACKET,
     RIGHT_BRACKET,
-
-    // KEYWORDS
-    NULL_,
+    NULL_,  // KEYWORDS
     TRUE_,
     FALSE_,
     IF,
@@ -82,11 +73,11 @@ enum class TokenType : uint32_t {
 };
 
 struct Token {
-    TokenType type;       // type of lexer token, e.g., INTEGER
-    std::string literal;  // value of lexer token, e.g., "5"
-    std::string filename; // source file of token
-    uint32_t row;        // line number in source file
-    uint32_t col;      // cursor number in line of source file
+    TokenType type;        // type of lexer token, e.g., INTEGER
+    std::string literal;   // value of lexer token, e.g., "5"
+    std::string filename;  // source file of token
+    uint32_t row;          // line number in source file
+    uint32_t col;          // cursor number in line of source file
 
     Token(
         TokenType type,

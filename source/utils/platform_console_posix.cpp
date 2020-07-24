@@ -26,16 +26,18 @@
 
 namespace platform {
 
-uint64_t print(std::string_view str, uint32_t   )
+uint64_t
+print(std::string_view str, uint32_t color_code)
 {
     std::cout << BLUE << str << RESET << std::endl;
     return 0;
 }
 
-uint64_t print(std::string_view str)
+uint64_t
+print(std::string_view str)
 {
     return print(str, 3);
 }
 
-} // namespace platform
+}  // namespace platform
 #endif

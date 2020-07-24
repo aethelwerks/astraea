@@ -36,8 +36,7 @@ scope_add_function_definition(Scope *scope, AstFunction *func_def)
     } else {
         scope->function_definitions = (AstFunction **)std::realloc(
             scope->function_definitions,
-            (scope->num_function_definitions + 1 /*new element*/) * sizeof(AstFunction **)
-        );
+            (scope->num_function_definitions + 1 /*new element*/) * sizeof(AstFunction **));
     }
 
     scope->function_definitions[scope->num_function_definitions] = func_def;
@@ -67,8 +66,7 @@ scope_add_typedef(Scope *scope, AstType *type_def)
     } else {
         scope->type_definitions = (AstType **)std::realloc(
             scope->type_definitions,
-            (scope->num_type_definitions + 1 /*new element*/) * sizeof(AstType **)
-        );
+            (scope->num_type_definitions + 1 /*new element*/) * sizeof(AstType **));
     }
 
     scope->type_definitions[scope->num_type_definitions] = type_def;
@@ -100,8 +98,7 @@ scope_add_variable_definition(Scope *scope, AstVariable *var_def)
     } else {
         scope->variable_definitions = (AstVariable **)std::realloc(
             scope->variable_definitions,
-            (scope->num_variable_definitions + 1 /*new element*/) * sizeof(AstVariable *)
-        );
+            (scope->num_variable_definitions + 1 /*new element*/) * sizeof(AstVariable *));
         scope->variable_definitions[scope->num_variable_definitions] = var_def;
         scope->num_variable_definitions += 1;
     }

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
-# This file originates from Google Skia and was provided under the terms bellow.
-# The original license file used by Google may be found in the ThirdPartyNotices file.
+# This file originates from @google/skia and was provided under the terms bellow.
+# The original license file used by Google may be found in the NOTICE file.
 #
 # ORIGINAL DISCLAIMER:
 # Copyright 2016 Google Inc.

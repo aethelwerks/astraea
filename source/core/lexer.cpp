@@ -131,15 +131,15 @@ Lexer::get_next_token()
         }
 
         ch = current_character();
-        if (ch == 39) {                                         // [ CHARACTER ]
+        if (ch == 39) {  // [ CHARACTER ]
             return collect_character();
-        } else if (ch == '"') {                                 // [ STRING ]
+        } else if (ch == '"') {  // [ STRING ]
             return collect_string();
-        } else if (is_character_number(ch)) {                   // [ INTEGER, ..., HEX ]
+        } else if (is_character_number(ch)) {  // [ INTEGER, ..., HEX ]
             return collect_number();
-        } else if (is_character_reserved(ch)) {                 // [ OPERATORS ]
+        } else if (is_character_reserved(ch)) {  // [ OPERATORS ]
             return collect_operator();
-        } else if (is_character_valid_identifier(ch)) {         // [ IDENTIFIER ]
+        } else if (is_character_valid_identifier(ch)) {  // [ IDENTIFIER ]
             return collect_identifier();
         } else {
             return Token(TokenType::ILLEGAL, "", path, row, col);
@@ -161,8 +161,9 @@ Lexer::collect_character()
         auto token = Token(
             TokenType::CHARACTER,
             current_character_as_u8string(),
-            path, init_row, init_col
-        );
+            path,
+            init_row,
+            init_col);
         advance_cursor();  // eat CHARACTER
         advance_cursor();  // eat APOSTROPHE
         return token;
@@ -219,7 +220,8 @@ Lexer::collect_number_binary()
     return Token(TokenType::BINARY, literal, path, init_row, init_col);
 }
 
-Token Lexer::collect_number_octal()
+Token
+Lexer::collect_number_octal()
 {
     uint32_t init_row = row;
     uint32_t init_col = col;
@@ -235,7 +237,8 @@ Token Lexer::collect_number_octal()
     return Token(TokenType::OCTAL, literal, path, init_row, init_col);
 }
 
-Token Lexer::collect_number_hex()
+Token
+Lexer::collect_number_hex()
 {
     uint32_t init_row = row;
     uint32_t init_col = col;
@@ -544,12 +547,12 @@ Lexer::collect_string()
     uint32_t init_col = col;
     auto token_literal = std::string{""};
 
-    advance_cursor(); // Eat ["] character.
+    advance_cursor();  // Eat ["] character.
     while (current_character() != '"') {
         token_literal += current_character_as_u8string();
         advance_cursor();
     }
-    advance_cursor(); // Eat ["] character.
+    advance_cursor();  // Eat ["] character.
 
     return Token(TokenType::STRING, token_literal, path, init_row, init_col);
 }

@@ -8,7 +8,7 @@ is_character_skipable(char ch)
         ch == 10 ||   // New Line
         ch == 11 ||   // Vertical Tab
         ch == 13      // Carriage Return
-        ) {
+    ) {
         return true;
     }
 
@@ -56,7 +56,7 @@ is_character_reserved(char ch)
         ch == '>' || ch == '^' || ch == '&' || ch == '!' ||
         ch == '=' || ch == '"' || ch == '#' ||
         ch == 39  // [ ' ] APOSTROPHE
-        ) {
+    ) {
         return true;
     }
 

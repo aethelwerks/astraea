@@ -2,13 +2,13 @@
 Language:                                       Cpp
 # BasedOnStyle:                                 Google
 AccessModifierOffset:                           -4
-AlignAfterOpenBracket:                          Align
+AlignAfterOpenBracket:                          AlwaysBreak
 AlignConsecutiveAssignments:                    false
 AlignConsecutiveDeclarations:                   false
 AlignEscapedNewlinesLeft:                       true
 AlignOperands:                                  true
 AlignTrailingComments:                          true
-AllowAllParametersOfDeclarationOnNextLine:      true
+AllowAllParametersOfDeclarationOnNextLine:      false
 AllowShortBlocksOnASingleLine:                  false
 AllowShortCaseLabelsOnASingleLine:              false
 AllowShortFunctionsOnASingleLine:               All
@@ -18,11 +18,12 @@ AlwaysBreakAfterDefinitionReturnType:           All
 AlwaysBreakAfterReturnType:                     None
 AlwaysBreakBeforeMultilineStrings:              true
 AlwaysBreakTemplateDeclarations:                false
-BinPackArguments:                               true
+BinPackArguments:                               false
 BinPackParameters:                              false
 BraceWrapping:
   AfterClass:            false
   AfterControlStatement: false
+  AfterCaseLabel:        true
   AfterEnum:             false
   AfterFunction:         true
   AfterNamespace:        false
@@ -35,30 +36,38 @@ BraceWrapping:
 BreakBeforeBinaryOperators:                     None
 BreakBeforeBraces:                              Custom
 BreakBeforeTernaryOperators:                    true
+SpaceBeforeCtorInitializerColon:                true
+BreakBeforeInheritanceComma:                    true
+BreakInheritanceList:                           AfterColon
 BreakConstructorInitializersBeforeComma:        true
+BreakConstructorInitializers:                   AfterColon
 BreakAfterJavaFieldAnnotations:                 false
 BreakStringLiterals:                            true
-ColumnLimit:                                    100
+ColumnLimit:                                    0
 CommentPragmas:                                 '^ IWYU pragma:'
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
-ConstructorInitializerIndentWidth:              8
-ContinuationIndentWidth:                        8
+ConstructorInitializerIndentWidth:              4
+ContinuationIndentWidth:                        4
 Cpp11BracedListStyle:                           true
 DerivePointerAlignment:                         false
 DisableFormat:                                  false
-ExperimentalAutoDetectBinPacking:               true
+ExperimentalAutoDetectBinPacking:               false
 ForEachMacros:                                  [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
-  - Regex:    '^".*\.h"'
-    Priority: 1
-  - Regex:    '^<.*\.h>'
-    Priority: 2
-  - Regex:    '^<.*'
-    Priority: 3
-  - Regex:    '.*'
-    Priority: 4
+# Headers in <> without extension.
+- Regex:           '<([A-Za-z0-9\/-_])+>'
+  Priority:        4
+# Headers in <> from specific external libraries.
+- Regex:           '<((\bboost\b)|(\bcatch2\b))\/([A-Za-z0-9.\/-_])+>'
+  Priority:        3
+# Headers in <> with extension.
+- Regex:           '<([A-Za-z0-9.\/-_])+>'
+  Priority:        2
+# Headers in "" with extension.
+- Regex:           '"([A-Za-z0-9.\/-_])+"'
+  Priority:        1
 IncludeIsMainRegex:                             '([-_](test|unittest))?$'
-IndentCaseLabels:                               true
+IndentCaseLabels:                               false
 IndentWidth:                                    4
 IndentWrappedFunctionNames:                     false
 JavaScriptQuotes:                               Leave

@@ -34,7 +34,7 @@ ast_compound_init()
         std::exit(1);
     }
 
-    ast_compound->node_type  = AstNodeType::COMPOUND;
+    ast_compound->node_type = AstNodeType::COMPOUND;
     ast_compound->statements = nullptr;
     ast_compound->statement_count = 0;
     ast_compound->scope = nullptr;
@@ -47,8 +47,7 @@ ast_compound_add_statement(AstCompound *ast_compound, AstNode *statement)
 {
     auto reallocated_buffer = (AstNode **)std::realloc(
         ast_compound->statements,
-        (ast_compound->statement_count + 1 /*new elem*/) * sizeof(AstNode *)
-    );
+        (ast_compound->statement_count + 1 /*new elem*/) * sizeof(AstNode *));
     if (!reallocated_buffer) {
         std::exit(1);
     }
@@ -128,8 +127,7 @@ ast_typedef_enum_add_element(AstTypeEnum *ast_type_enum, AstNode *element)
     /* This code sucks! */
     auto reallocated_buffer = (AstNode **)realloc(
         ast_type_enum->elements,
-        (ast_type_enum->element_count + 1 /*new elem*/) * sizeof(AstNode *)
-    );
+        (ast_type_enum->element_count + 1 /*new elem*/) * sizeof(AstNode *));
     if (!reallocated_buffer) {
         std::exit(1);
     }
@@ -185,7 +183,7 @@ ast_vardef_init(std::string_view variable_name)
     }
 
     ast_variable->node_type = AstNodeType::VARIABLE_DEFINITION;
-    ast_variable->name  = variable_name;
+    ast_variable->name = variable_name;
 
     return ast_variable;
 }
@@ -232,7 +230,7 @@ parse_type_info(std::string_view base_type)
 std::string
 ast_node_type_as_string(AstNodeType node_type)
 {
-    switch(node_type) {
+    switch (node_type) {
     case AstNodeType::COMPOUND:
     {
         return "Compound";
@@ -252,4 +250,4 @@ ast_node_type_as_string(AstNodeType node_type)
 
     return "";
 }
-} // namespace astraea
+}  // namespace astraea

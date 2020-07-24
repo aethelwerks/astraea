@@ -13,7 +13,7 @@
 #elif __linux__
 #define OS_LINUX
 #define OS_POSIX
-#elif defined(_MSC_VER) || defined(WIN32)|| defined(_WIN32)
+#elif defined(_MSC_VER) || defined(WIN32) || defined(_WIN32)
 #define OS_WINDOWS
 #else
 #error "Unsuported platform."

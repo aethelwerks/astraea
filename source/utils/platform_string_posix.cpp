@@ -4,5 +4,5 @@
 
 namespace platform {
 
-} // namespace platform
+}  // namespace platform
 #endif

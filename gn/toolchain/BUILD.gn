@@ -1,11 +1,6 @@
-# Copyright 2020 Krayfaus. All rights reserved.
-#
-# Use of this source code is governed by a BSD-style license that can be
-# found in the LICENSE file.
-#
-# This GN configuration file originates from Google Skia and was provided
+# This GN configuration file originates from @google/skia and was provided
 # under the terms bellow. The original license file used by Google may be
-# found in the ThirdPartyNotices file.
+# found in the NOTICE file.
 #
 # ORIGINAL DISCLAIMER:
 # Copyright 2016 Google Inc.

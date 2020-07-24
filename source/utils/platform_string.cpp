@@ -15,7 +15,7 @@ utf8_cp_size(std::string_view str)
 {
     int32_t ch, i = 0, q = 0;
     for (; i < 4; i += 1) {
-        ch = (unsigned char) str[i];
+        ch = (unsigned char)str[i];
         if (ch >= 0 && ch <= 127) {
             return 1;
         } else if ((ch & 0xE0) == 0xC0) {
@@ -25,19 +25,19 @@ utf8_cp_size(std::string_view str)
         } else if ((ch & 0xF8) == 0xF0) {
             return 4;
         } else {
-            return 0; // invalid utf8
+            return 0;  // invalid utf8
         }
     }
     return -1;
 }
 
 int32_t
-utf8_string_lenght(const char* str)
+utf8_string_lenght(const char *str)
 {
     int32_t c, i, ix, q;
-    for (q = 0, i = 0, ix = (int32_t) strlen(reinterpret_cast<const char*>(str)); i < ix;
-        i++, q++) {
-        c = (unsigned char) str[i];
+    for (q = 0, i = 0, ix = (int32_t)strlen(reinterpret_cast<const char *>(str)); i < ix;
+         i++, q++) {
+        c = (unsigned char)str[i];
         if (c >= 0 && c <= 127)
             i += 0;
         else if ((c & 0xE0) == 0xC0)
@@ -53,4 +53,4 @@ utf8_string_lenght(const char* str)
     }
     return q;
 }
-} // namespace platform
+}  // namespace platform

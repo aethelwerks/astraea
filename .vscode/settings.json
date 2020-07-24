@@ -78,7 +78,7 @@
         "numeric": "cpp",
         "random": "cpp",
         "ranges": "cpp",
-        "cinttypes": "cpp"
-    },
-    "restructuredtext.confPath": ""
+        "cinttypes": "cpp",
+        "cassert": "cpp"
+    }
 }

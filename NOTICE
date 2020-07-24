@@ -1,9 +1,9 @@
 THIRD-PARTY SOFTWARE NOTICES AND INFORMATION
-Do Not Translate or Localize
 
-Aethelwerka's Astraea Atelier incorporates components from the projects listed below. Aethelwerka licenses these components to you under Aethelwerka's Astraea Atelier software licensing terms, except that components licensed under open source licenses requiring that such components remain under their original license are being made available to you by Aethelwerka under their original licensing terms.
+Aethelwerka's Astraea incorporates components from the projects listed below.
 
-The original copyright notices and the licenses under which Aethelwerka received such components are set forth below for informational purposes. Aethelwerka reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
+The original copyright notices and the licenses under which Aethelwerka received such components are set forth below.
+Aethelwerka reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.
 
 1.	@google/gn (https://gn.googlesource.com/gn)
 2.	@google/skia (https://skia.googlesource.com/skia)

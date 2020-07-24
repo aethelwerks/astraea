@@ -2,10 +2,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Astraea-CLI",
+            "name": "Astraea-tests",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "astraea-cli.exe",
+            "program": "test.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/out/vscode",

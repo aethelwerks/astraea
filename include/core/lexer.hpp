@@ -17,7 +17,9 @@ public:
     uint32_t pos;
     std::string contents;
     enum class Status {
-        OK, ERROR, EOF_
+        OK,
+        ERROR,
+        EOF_
     } status;
 
 public:

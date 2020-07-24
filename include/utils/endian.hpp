@@ -29,16 +29,17 @@ enum class Endian {
 };
 #endif
 
-template <typename Type> void
+template <typename Type>
+void
 endian_swap(Type &data)
 {
-    uint8_t* mem = reinterpret_cast<uint8_t*>(&data);
+    uint8_t *mem = reinterpret_cast<uint8_t *>(&data);
     std::reverse(mem, mem + sizeof(Type));
 }
 
 template <typename Type>
 inline constexpr void
-maybe_endian_swap(Type* data, uint32_t lenght, Endian endian)
+maybe_endian_swap(Type *data, uint32_t lenght, Endian endian)
 {
     if (Endian::native != endian && sizeof(Type) > sizeof(uint8_t)) {
         for (uint32_t i = 0; i < lenght; i += 1) {

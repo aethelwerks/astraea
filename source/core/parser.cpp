@@ -5,8 +5,8 @@
  * This source code is licensed under the BSD-style license that can be
  * found in the LICENSE file in the root directory of this source tree.
  */
-#include "include/core/ast.hpp"
 #include "include/core/parser.hpp"
+#include "include/core/ast.hpp"
 #include "include/utils/platform_console.hpp"
 #include <algorithm>
 
@@ -43,7 +43,7 @@ Parser::parse()
 
 AstNode *
 Parser::parse_expression()
-{   /*
+{ /*
     printf(
         "PARSER [Expression]: %s %d\n",
         current_token.literal,
@@ -120,9 +120,9 @@ AstNode *
 Parser::parse_statement()
 {
     switch (current_token.type) {
-        case TokenType::IDENTIFIER:
-            return parse_identifier();
-            break;
+    case TokenType::IDENTIFIER:
+        return parse_identifier();
+        break;
     }
     return nullptr;
 }
@@ -134,8 +134,7 @@ Parser::parse_statements()
 
     while (
         TokenType::EOF_ != current_token.type &&
-        TokenType::ILLEGAL != current_token.type
-    ) {
+        TokenType::ILLEGAL != current_token.type) {
         if (TokenType::IDENTIFIER != current_token.type) {
             break;
         }
@@ -147,7 +146,6 @@ Parser::parse_statements()
 
     return (AstNode *)ast_compound;
 }
-
 
 AstNode *
 Parser::parse_string()
@@ -176,7 +174,7 @@ Parser::parse_type_enum(std::string_view enum_name)
     if (TokenType::LEFT_BRACE != current_token.type) {
         auto enum_base_type = parse_type_info(current_token.literal);
         // if (enum_base_type != AstTypeInfo::UNKNOWN) {
-            eat(TokenType::IDENTIFIER);  // eat base_type
+        eat(TokenType::IDENTIFIER);  // eat base_type
         // }
         ast_type_enum->base_type = enum_base_type;
     }
@@ -315,4 +313,4 @@ Parser::parse_variable_definition()
     return (AstNode *)var_def;
 }
 
-} // namespace astraea
+}  // namespace astraea

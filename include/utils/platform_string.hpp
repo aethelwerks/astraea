@@ -6,11 +6,22 @@
  * found in the LICENSE file in the root directory of this source tree.
  */
 #pragma once
-#include "platform.hpp"
-#include <string>
-#include <string_view>
+#include "types.hpp"
+#include <string>       // IWYU pragma: export
+#include <string_view>  // IWYU pragma: export
 
 namespace platform {
+
+/*
+ * The size of an UTF-8 code point.
+ */
+uint32_t utf8_cp_size(std::string_view);
+
+/*
+ * The lenght of an UTF-8 encoded string.
+ */
+int32_t utf8_string_lenght(const char *);
+
 /*
  * Convert from Windows API string to UTF-8 string.
  */
@@ -19,13 +30,13 @@ std::string winapi_to_utf8(const wchar_t *, const wchar_t *);
 /*
  * Convert from Windows API string to UTF-8 string.
  */
-std::string winapi_to_utf8(const std::wstring_view&);
+std::string winapi_to_utf8(const std::wstring_view &);
 
 /*
  * Convert from UTF-8 string to Windows API string.
  */
-std::wstring utf8_to_winapi(const std::string_view&);
-    
+std::wstring utf8_to_winapi(const std::string_view &);
+
 /*
  * Convert from UTF-8 string to UTF-16 string.
  */
@@ -45,15 +56,5 @@ std::wstring utf8_to_winapi(const std::string_view&);
  * Convert from UTF-32 string to UTF-8 string.
  */
 // std::string utf32_to_utf8(const char32_t *str);
-
-/*
- * The size of an UTF-8 code point.
- */
-uint32_t utf8_cp_size(std::string_view str);
-
-/*
- * The lenght of an UTF-8 encoded string.
- */
-int32_t utf8_string_lenght(const char* str);
 
 }  // namespace platform

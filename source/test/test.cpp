@@ -20,7 +20,6 @@ using namespace astraea;
 
 void test_tokenizer(Lexer &lexer);
 
-
 int
 main(int argc, char **argv)
 {
@@ -33,14 +32,13 @@ main(int argc, char **argv)
         printf("Current working dir: %s\n", cwd);
     }
     auto source_path = std::string_view{"./resources/teste1.ast"};
-#else 
+#else
     auto source_path = std::string_view{"D:/scripts/teste1.ast"};
 #endif
     if (argc == 2) {
         source_path = std::string_view{argv[1]};
     }
     platform::print(std::string("Script: ") + std::string(source_path) + "\n");
-
 
     auto lexer = Lexer{source_path};
     platform::print(lexer.contents + "\n");
@@ -55,15 +53,14 @@ main(int argc, char **argv)
     return 0;
 }
 
-void test_tokenizer(Lexer &lexer)
+void
+test_tokenizer(Lexer &lexer)
 {
     Token token = lexer.get_next_token();
     while (token.type != TokenType::EOF_ && token.type != TokenType::ILLEGAL) {
-        auto output = std::string{"TOKEN "}
-            + std::to_string((int32_t)token.type)
-            + ": [ " + std::string(token.literal) + " ]"
-            + " (row " + std::to_string(token.row)
-            + ", col " + std::to_string(token.col) + ")\n";
+        auto output = std::string{"TOKEN "} + std::to_string((int32_t)token.type) + ": [ " +
+                      std::string(token.literal) + " ]" + " (row " + std::to_string(token.row) +
+                      ", col " + std::to_string(token.col) + ")\n";
         platform::print(output);
         token = lexer.get_next_token();
     }

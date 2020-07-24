@@ -10,6 +10,7 @@
 
 namespace astraea {
 
+// IWYU pragma: private, include "scope.hpp"
 struct Scope;
 
 struct Visitor {

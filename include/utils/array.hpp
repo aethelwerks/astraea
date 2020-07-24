@@ -10,116 +10,105 @@
 #include <algorithm>
 #include <cassert>
 
+#define MIN_ARRAY_LEN 8
+
 template <typename Type>
 struct Array {
-    Type* data;           // pointer to the elements in the array.
-    uint32_t count;       // number of elements stored in the array.
-    uint32_t capacity;    // number of allocated slots in the array.
-    bool is_unique : 1;   // whether the array owns its memory or not.
+    Type *data;          // pointer to the elements in the array.
+    uint32_t count;      // number of elements stored in the array.
+    uint32_t capacity;   // number of allocated slots in the array.
+    bool is_unique : 1;  // whether the array owns its memory or not.
 
-    ~Array() {
+    Array(uint32_t reserve_count = 0)
+    {
+        this->count = 0;
+        if (!reserve_count) {
+            this->capacity = 0;
+            this->data = nullptr;
+            this->is_unique = true;
+            return;
+        }
+        this->capacity = reserve_count > MIN_ARRAY_LEN ? reserve_count : MIN_ARRAY_LEN;
+        this->data = (Type *)std::calloc((size_t)this->capacity, sizeof(Type));
+        this->is_unique = true;
+    }
+
+    ~Array()
+    {
         if (data != nullptr && is_unique) {
             std::free(data);
         }
     }
-};
 
-#define MIN_ARRAY_LEN 8
-
-template <typename Type>
-Array<Type>
-array_init(uint32_t reserve_count = 0)
-{
-    Array<Type> array;
-    array.count = 0;
-    if (!reserve_count) {
-        array.capacity = 0;
-        array.data = nullptr;
-        array.is_unique = true;
-        return array;
-    }
-    array.capacity = reserve_count > MIN_ARRAY_LEN ? reserve_count : MIN_ARRAY_LEN;
-    array.data = (Type*) std::calloc((size_t) array.capacity, sizeof(Type));
-    array.is_unique = true;
-
-    return array;
-}
-
-template <typename Type>
-void
-array_resize(Array<Type>& array, uint32_t new_capacity)
-{
-    array.capacity = is_pow2(new_capacity) ? new_capacity : new_capacity + 1;
-    assert(array.capacity >= new_capacity);
-    array.count = std::min(array.count, array.capacity);
-
-    Type* new_data = (Type*) std::calloc((size_t) array.capacity, sizeof(Type));
-    if (new_data && array.count > 0) {
-        std::memcpy(new_data, array.data, sizeof(Type) * array.count);
-    }
-    if (array.data && array.is_unique) {
-        std::free(array.data);
+    auto
+    begin()
+    {
+        return this->data;
     }
 
-    array.data = new_data;
-    array.is_unique = true;
-}
-
-template <typename Type>
-void
-array_maybe_grow(Array<Type>& array)
-{
-    if (array.count + 1 < array.capacity) {
-        return;
+    auto
+    end()
+    {
+        return this->data ? this->data + this->count : nullptr;
     }
-    array_resize<Type>(array, array.count + MIN_ARRAY_LEN);
-}
 
-template <typename Type>
-void
-array_add(Array<Type>& array, Type element)
-{
-    array_maybe_grow(array);
-    array.data[array.count] = element;
-    array.count += 1;
-}
+    void
+    push(Type element)
+    {
+        maybe_grow(array);
+        this->data[this->count] = element;
+        this->count += 1;
+    }
 
-template <typename Type>
-void
-array_remove(Array<Type>& array, Type element)
-{
-    for (uint32_t i = 0; i < array.count; i += 1) {
-        if (std::memcmp(&array.data[i], &element, sizeof(Type)) == 0) {
-            uint32_t next_at = i + 1;
-            if (next_at < array.count) {
-                int32_t n_after = array.count - next_at;
-                std::memmove(
-                    &array.data[i],
-                    &array.data[next_at],
-                    n_after * sizeof(Type)
-                );
-                uint32_t reset_at = i + n_after;
-                assert(reset_at < array.count);
-                std::memset(&array.data[reset_at], 0, sizeof(Type));
-            } else {
-                std::memset(&array.data[i], 0, sizeof(Type));
+    void
+    pop(Type element)
+    {
+        for (uint32_t i = 0; i < this->count; i += 1) {
+            if (std::memcmp(&this->data[i], &element, sizeof(Type)) == 0) {
+                uint32_t next_at = i + 1;
+                if (next_at < this->count) {
+                    int32_t n_after = this->count - next_at;
+                    std::memmove(
+                        &this->data[i],
+                        &this->data[next_at],
+                        n_after * sizeof(Type));
+                    uint32_t reset_at = i + n_after;
+                    assert(reset_at < this->count);
+                    std::memset(&this->data[reset_at], 0, sizeof(Type));
+                } else {
+                    std::memset(&this->data[i], 0, sizeof(Type));
+                }
+                this->count -= 1;
+                break;
             }
-            array.count -= 1;
-            break;
         }
     }
-}
 
-template <typename Type>
-Type*
-array_first(Array<Type>& array)
-{
-    return array.data;
-}
+    static void
+    resize(Array<Type> &array, uint32_t new_capacity)
+    {
+        array.capacity = is_pow2(new_capacity) ? new_capacity : new_capacity + 1;
+        assert(array.capacity >= new_capacity);
+        array.count = std::min(array.count, array.capacity);
 
-template <typename Type>
-Type*
-array_last(Array<Type>& array)
-{
-    return array.data ? array.data + array.count : nullptr;
-}
+        Type *new_data = (Type *)std::calloc((size_t)array.capacity, sizeof(Type));
+        if (new_data && array.count > 0) {
+            std::memcpy(new_data, array.data, sizeof(Type) * array.count);
+        }
+        if (array.data && array.is_unique) {
+            std::free(array.data);
+        }
+
+        array.data = new_data;
+        array.is_unique = true;
+    }
+
+    static void
+    maybe_grow(Array<Type> &array)
+    {
+        if (array.count + 1 < array.capacity) {
+            return;
+        }
+        array_resize<Type>(array, array.count + MIN_ARRAY_LEN);
+    }
+};

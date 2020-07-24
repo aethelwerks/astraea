@@ -10,16 +10,16 @@
 #include <cstdint>
 #include <cstring>
 
-template <typename T>
+template <typename Type>
 static constexpr bool
-to_bool(const T& x)
+to_bool(const Type &value)
 {
-    return 0 != x;
+    return 0 != value;
 }
 
-template <typename T>
+template <typename Type>
 constexpr inline bool
-is_pow2(T value)
+is_pow2(Type value)
 {
     return (value & (value - 1)) == 0;
 }
